@@ -1,0 +1,172 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<script src="~/Content/angular.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<div ng-app="ngApp" ng-controller="myctrl">
+ 
+
+    <div>
+        <label>First value </label>
+             <input  ng-model="firstvalue" type="number" ng-init="firstvalue=0"/>
+        <label>second value </label>
+             <input type="number" ng-model="secondvalue" /><br />
+        <label>Result : {{result}}</label>
+
+
+        @*<table border="2" class="table">
+            <thead>
+                <tr>
+                    <td>Item</td>
+                    <td>Qty</td>
+                    <td>Price</td>
+                    <td>Total</td>
+                </tr>
+               
+            </thead>
+            <tbody>
+                <tr ng-repeat="x in productlist">
+                    <td>
+                       
+                        {{x.product}}
+                    </td>
+                    <td>
+                        {{x.qty}}
+
+                    </td>
+                    <td>
+                        {{x.price}}
+
+                    </td>
+                    <td>
+                        {{x.total}}
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>*@
+        <br />
+   
+        <input type="button" value="add + " ng-click="adddata()" class="btn btn-success"/>
+        <table border="2" class="table">
+            <thead>
+                <tr>
+                    <td>SL</td>
+                    <td>Item</td>
+                    <td>Qty</td>
+                    <td>Price</td>
+                    <td>Total</td>
+                    <td>Action</td>
+                </tr>
+
+            </thead>
+            <tbody>
+                <tr ng-repeat="x in productdata">
+                    <td>
+
+                        {{$index+1}}
+                    </td>
+                    <td>
+
+                        <input ng-model="x.product" class="form-control input-sm" type="text" name="produlist[{{$index}}].product"/>
+                    </td>
+                    <td>
+                        <input ng-model="x.qty" type="number"class="form-control input-sm"  />
+
+                    </td>
+                    <td>
+                        <input ng-model="x.price" type="number"class="form-control input-sm" />
+
+                    </td>
+                    <td>
+                      {{x.qty*x.price}}
+
+                    </td>
+                    <td>
+                       <input type="button" ng-click="delete($index)" value="Delete" class="form-control input-sm btn btn-danger" ng-disabled="validation()"/>
+                        {{validation()}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        Total Amount :<label class="text-success"> {{getTotalUseWithoutForeach()}}</label>  
+        <button ng-click="getSum()" name="Sum" value="Sum">Sum</button>
+        <label class="text-danger"> {{validation()}}</label>  
+</div>
+
+
+
+
+
+</div>
+
+<script>
+    var ngApp = angular.module("ngApp", []);
+    ngApp.controller('myctrl', function ($scope) {
+        $scope.secondvalue = 0
+        $scope.fullname = "anower"
+        $scope.result=0
+        $scope.getSum = function () {
+            $scope.result = 0
+            var result = $scope.firstvalue + $scope.secondvalue
+            $scope.result = result;
+        }
+        $scope.productdata = [{ product: "", qty: '', price: '' } ];
+
+
+        $scope.adddata = function () {
+            $scope.productdata.push({ product: "", qty: '', price: '' })
+        }
+
+        $scope.productlist = [
+            { product: "Product 1", qty: 2, price: 20, total: 40 },
+            { product: "Product 2", qty: 2, price: 30, total: 60 },
+            { product: "Product 3", qty: 3, price: 40, total: 70 },
+            { product: "Product 4", qty: 2, price: 50, total: 30 },
+            { product: "Product 5", qty: 3, price: 60, total: 45 },
+            { product: "Product 6", qty: 5, price: 70, total: 90 },
+        ]
+
+
+        $scope.delete = function (index) {
+            $scope.productdata.splice(index, 1);
+        }
+
+        $scope.getTotalUseForeach = function () {
+            var total =  0
+            angular.forEach($scope.productdata, function (value) {
+                total += value.qty * value.price;
+            });
+            return total;
+        }
+
+        $scope.getTotalUseWithoutForeach = function () {
+            var total = 0;
+            if ($scope.productdata.length > 0 && $scope.productdata[0].qty>0) {
+                for (var i = 0; i<$scope.productdata.length; i++) {
+                    total += $scope.productdata[i].qty * $scope.productdata[i].price;
+                }
+            }
+           
+            return total;
+        }
+
+        $scope.validation = function () {
+            var message = "";
+            var flag =false;
+            for (var i = 0; i < $scope.productdata.length; i++) {
+                if ($scope.productdata[i].qty > 5) {
+                    message = "your item is too big"
+                    flag = true;
+ 
+                } else if ($scope.productdata[i].qty==0) {
+                    flag = true;
+                    message = "minimum qty 1"
+                }
+            }
+            return flag;
+        }
+
+    })
+</script>
+
